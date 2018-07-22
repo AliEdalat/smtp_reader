@@ -1,6 +1,6 @@
 #include "SMTPDissector.h"
 
-void update_state_of_connection(std::string source_mac, std::string source_ip,
+void SMTPDissector::update_state_of_connection(std::string source_mac, std::string source_ip,
 	 std::string source_port, std::string dest_mac, std::string dest_ip, std::string dest_port, std::string raw_data)
 {
 
@@ -31,8 +31,9 @@ void update_state_of_connection(std::string source_mac, std::string source_ip,
 	}
 }
 
-std::string find_state_from_raw_data(std::string raw_data, std::vector<std::string>& Ccs_
-		, std::string& source_name_, std::string& source_email_, std::string& email_txt_)
+std::string SMTPDissector::find_state_from_raw_data(std::string raw_data, std::vector<std::string>& Ccs_
+		, std::string& source_name_, std::string& source_email_, std::string dest_name_,
+		 std::string date_, std::string& email_txt_)
 {
 	std::string data_prefix = "DATA";
 	std::string quit_prefix = "QUIT";
@@ -44,21 +45,49 @@ std::string find_state_from_raw_data(std::string raw_data, std::vector<std::stri
 		return "QUIT";
 	}else
 	{
-		std::stringstream ss(raw_data);
-		std::string temp;
-
-		if (sentence != NULL)
-		{
-			while(std::getline(ss,temp,'\n')){
-				if (temp.substr(0, quit_prefix.size()) == quit_prefix)
-				{
-					/* code */
-				}
-			}
-		}
-
-		email_txt_ = raw_data;
+		//bool is_email_header = true;
+		
+		
+		email_txt_ = raw_data;	
 		return "append";
 	}
 
+}
+
+void SMTPDissector::extract_data_from_data_packets(std::string raw_data, std::string source_name_, std::string source_email_, std::string dest_name_, std::vector<std::string>& Ccs_, int& start_email_){
+	std::stringstream ss(raw_data);
+	std::string temp;
+	//int start_email_ = 0;
+	if (raw_data != "")
+	{
+		while(std::getline(ss,temp,'\n')){
+			if (temp.substr(0, std::string("From: ").size()) == "From: ")
+			{
+				start_email_ += temp.size();
+				fill_source_data(temp, start, source_name_, source_email_);
+			}
+			else if (temp.substr(0, std::string("To: ").size()) == "To: ")
+			{
+				start_email_ += temp.size();
+				fill_dest_data(temp, start, dest_name_, Ccs_);	
+			}
+			else if (temp.substr(0, std::string("Cc: ").size()) == "Cc: ")
+			{
+				start_email_ += temp.size();
+				fill_CC_email(temp, start, Ccs_);
+			}
+			else if (temp.substr(0, std::string("Date: ").size()) == "Date: ")
+			{
+				start_email_ += temp.size();
+			}
+			else if (temp.substr(0, std::string("Subject: ").size()) == "Subject: ")
+			{
+				start_email_ += temp.size();
+			}
+			else{
+				//is_email_header = false;
+				break;
+			}
+		}
+	}
 }

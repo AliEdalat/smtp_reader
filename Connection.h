@@ -20,6 +20,13 @@ public:
 	std::string get_date() const {return date_;}
 	std::string get_data() const {return data_;}
 
+	std::string get_source_ip() const {return source_ip_;}
+	std::string get_source_mac() const {return source_mac_;}
+	std::string get_source_port() const {return source_port_;}
+	std::string get_dest_ip() const {return dest_ip_;}
+	std::string get_dest_mac() const {return dest_mac_;}
+	std::string get_dest_port() const {return dest_port_;}
+
 	void set_is_terminated(bool is_terminated) {is_terminated_ = is_terminated;}
 	void set_is_data_ready(bool is_data_ready) {is_data_ready_ = is_data_ready;}
 	void set_is_established(bool is_established) {is_established_ = is_established;}

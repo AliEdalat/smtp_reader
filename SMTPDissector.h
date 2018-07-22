@@ -23,10 +23,14 @@ private:
 	std::string email_txt_;
 	std::vector<std::string>& Ccs_;
 	std::string source_name_;
-	std::string source_email_	
+	std::string source_email_;
+	std::string dest_name_;
+	std::string date_;	
 
 	std::string find_state_from_raw_data(std::string raw_data, std::vector<std::string>& Ccs_
 		, const std::string source_name_, const std::string source_email_, std::string email_txt_);
+
+	void extract_data_from_data_packets();
 
 	
 };
